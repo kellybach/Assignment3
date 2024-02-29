@@ -7,20 +7,12 @@
 # Kelly Bach
 # kbach3@uci.edu
 # 18576745
-# a2.py
-
-# Starter code for assignment 2 in ICS 32 Programming with Software Libraries in Python
-
-# Replace the following placeholders with your information.
-
-# Kelly Bach
-# kbach3@uci.edu
-# 18576745
 
 from pathlib import Path
 import Profile
 import json
 import ui
+import ds_client
 
 def searches(string):
     splits = [] 
@@ -36,9 +28,6 @@ def searches(string):
 def get_command(string):
     return searches(string)[0]
 
-#C /ics32/a2-starter/Assignment2/ -n meow
-
-
 def create_user(string):
     new = searches(string)[1] + searches(string)[3] + '.dsu'
     Path(new).touch()
@@ -53,25 +42,11 @@ def profile_info():
     info = [user, password, bio]
     return info
 
-def create(string):
-    new = searches(string)[1] + searches(string)[3] + '.dsu'
-    Path(new).touch()
-    info = profile_info_admin()
-    create_profile(info, new)
-    return new, info
-
-def profile_info_admin():
-    user = input()
-    password = input()
-    bio = input()
-    info = [user, password, bio]
-    return info
-
 def create_profile(string, pathway):
+    print(string)
     profile = Profile.Profile(dsuserver=None, username=string[0], password=string[1], bio=string[2]) 
     Profile.Profile.save_profile(profile, pathway)
 
-#O /ics32/a2-starter/Assignment2/meow.dsu
 def open_file(string):
     path_name = searches(string)[1]
     try:
@@ -102,8 +77,14 @@ def edit_file(string, pathway, info):
         elif searches(string)[i] == '-addpost':
             new_post = Profile.Post(searches(string)[i + 1])
             Profile.Profile.add_post(profile, post=new_post)
+            onlineopt = input('Post added to Journal. Would you like to post it online?\n"Y/N"\n')
+            if onlineopt == 'Y':
+                serverinfo = input('What is the server you would like to connect to?\n')
+                print (serverinfo, 3021, info[0], info[1], searches(string)[i + 1], info[2])
+                ds_client.send(serverinfo, 3021, info[0], info[1], searches(string)[i + 1], info[2])
+            else:
+                print("Post not added to web.")
         elif searches(string)[i] == '-delpost':
-            Profile.Profile.load_profile(profile, pathway)
             Profile.Profile.del_post(profile, int(searches(string)[i + 1]))
         Profile.Profile.save_profile(profile, pathway)
         i += 2
@@ -135,15 +116,6 @@ def print_info(string, pathway, info):
             for entry in entries:
                 print(f'Your entry: {entry['entry']}. Time: {entry['timestamp']}.')
         i += 1
-
-def get_file_name(string):
-    if get_command(string) == 'C':
-        info = create(string)
-        return info
-    elif get_command(string) == 'O': 
-        info = open_file(string)
-        return info
-    
 
 def get_file_name_user(string):
     if get_command(string) == 'C':
@@ -198,25 +170,7 @@ def run():
             print_info(newcomm, pathway, info)
         comm = input(ui.subcommands)
 
-def admin():
-    search = input()
-    data = get_file_name(search)
-    pathway = data[0]
-    info = data[1]
-    while get_command != 'Q':
-        search = input()
-        if get_command(search) == 'E':
-            edit_file(search, pathway, info)
-        elif get_command(search) == 'P':
-            print_info(search, pathway, info)
-
 if __name__ == '__main__':
-    initialuser = input('Hi! Are you a user or an admin?\n')
-    useropt = ['user', 'admin']
-    while initialuser not in useropt:
-        initialuser = input('Please select user or admin.\n') 
-    if initialuser == 'user':
-        run()
-    else:
-        admin()
+    run()
+                        
     

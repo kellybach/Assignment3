@@ -60,6 +60,3 @@ def send(server:str, port:int, username:str, password:str, message:str, bio:str=
   except Exception as error:
     print("Error: ", error, 'lmao')
     return False
-
-send('168.235.86.101', 3021, 'gordnramsi', 'chef','i cooked','ATEEEE')
-#send('127.0.0.1', 8080, 'test', 'meow','meow','meow')

@@ -98,7 +98,7 @@ class Profile:
         self.dsuserver = dsuserver # REQUIRED
         self.username = username # REQUIRED
         self.password = password # REQUIRED
-        self.bio = ''            # OPTIONAL
+        self.bio = bio            # OPTIONAL
         self._posts = []         # OPTIONAL
     
     """
