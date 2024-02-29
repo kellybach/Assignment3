@@ -34,39 +34,32 @@ def send(server:str, port:int, username:str, password:str, message:str, bio:str=
       send.flush()
       srv_msg = recv.readline()[:-1]
       print("Response received from server: ", srv_msg)
-      print(srv_msg)
-      srv_response = json.loads(srv_msg)
-      print(srv_response)
       if "token" in str(srv_msg):
         token = ds_protocol.extract_json(str(srv_msg))
-        print('yay')
       if message:
-        pass
-        """
         action = "post"
         data_msg = ds_protocol.json_data(action, username, password, token, post = message)
         send.write(data_msg + "\r\n")
         send.flush()
-        """
-      else:
-        pass
       if bio:
-        pass
-      else: 
-        pass
+        action = "bio"
+        data_msg = ds_protocol.json_data(action, username, password, token, bio = bio)
+        send.write(data_msg + "\r\n")
+        send.flush()
       srv_msg = recv.readline()[:-1]
       print("Response received from server: ", srv_msg)
-      srv_response = json.loads(srv_msg)
-      if "response" in srv_response:
-        if srv_response["response"]["type"] == "ok":
+      srv_msg = json.loads(srv_msg)
+      if "response" in srv_msg:
+        if srv_msg["response"]["type"] == "ok":
           return True
         else:
-          error = srv_response["response"]["message"]
+          error = srv_msg["response"]["message"]
           print("Error: ", error)
           return False
+      print('done')
   except Exception as error:
-    print("Error: ", error)
+    print("Error: ", error, 'lmao')
     return False
 
-send('168.235.86.101', 3021, 'meow', 'meow','meow','meow')
+send('168.235.86.101', 3021, 'gordnramsi', 'chef','i cooked','ATEEEE')
 #send('127.0.0.1', 8080, 'test', 'meow','meow','meow')

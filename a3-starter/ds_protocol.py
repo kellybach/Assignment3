@@ -36,10 +36,10 @@ def json_data(cmd, username, password, user_token=None, post=None, bio=None):
   elif cmd == "post":
     if not user_token:
       raise ValueError("No user token found.")
-    data = {"token": user_token, "post": {"entry": post,"timestamp": time.time()}}
+    data = json.dumps({"token": user_token, "post": {"entry": post,"timestamp": time.time()}})
   elif cmd == "bio":
     if not user_token:
       raise ValueError("No user token found.")
-    data = {"token":user_token, "bio": {"entry": bio,"timestamp": time.time()}}
+    data = json.dumps({"token": user_token, "bio": {"entry": bio,"timestamp": time.time()}})
   return data
 
