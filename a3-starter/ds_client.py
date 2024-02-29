@@ -9,6 +9,7 @@
 # server 168.235.86.101
 # port 3021
 import socket
+import ds_protocol
 import json
 def send(server:str, port:int, username:str, password:str, message:str, bio:str=None):
   '''
@@ -27,48 +28,45 @@ def send(server:str, port:int, username:str, password:str, message:str, bio:str=
       client.connect((server, port))
       send = client.makefile("w")
       recv = client.makefile("r")
-      user = '{"join": {"username": username,"password": password,"token":""}}'
-      print(user)
-      send.write(user + "\n\r")
+      user = {"join": {"username": username,"password": password,"token":""}}
+      json_user = json.dumps(user)
+      send.write(json_user + "\r\n")
       send.flush()
-  except:
-    pass
-      
-  return 
-
-
-def test(server = '192.168.100.5', port = 7777, username = 'blah', password = 'www' ):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-      client.connect((server, port))
-      send = client.makefile("w")
-      recv = client.makefile("r")
-      user = '{"join": {"username": username,"password": password,"token":""}}'
-      print(user)
-      send.write(user + "\r\n")
-      send.flush()
-
-test()  
-"""
-#serverinfo.send.write(whattowrite + '\r\n')
-serverinfo.send.flush()
-
-to read 
-#cmd=serverconnection.recv.readline()[:-1]
-#return cmd
-
-server info is client
-
-    def talk():
-      send = client.makefile("w")
-      msg = input("Enter message to send: ")
-      send.write(msg + "\r\n")
-      send.flush()
-
-    def receive():
-      recv = client.makefile("r")
       srv_msg = recv.readline()[:-1]
       print("Response received from server: ", srv_msg)
+      print(srv_msg)
+      srv_response = json.loads(srv_msg)
+      print(srv_response)
+      if "token" in str(srv_msg):
+        token = ds_protocol.extract_json(str(srv_msg))
+        print('yay')
+      if message:
+        pass
+        """
+        action = "post"
+        data_msg = ds_protocol.json_data(action, username, password, token, post = message)
+        send.write(data_msg + "\r\n")
+        send.flush()
+        """
+      else:
+        pass
+      if bio:
+        pass
+      else: 
+        pass
+      srv_msg = recv.readline()[:-1]
+      print("Response received from server: ", srv_msg)
+      srv_response = json.loads(srv_msg)
+      if "response" in srv_response:
+        if srv_response["response"]["type"] == "ok":
+          return True
+        else:
+          error = srv_response["response"]["message"]
+          print("Error: ", error)
+          return False
+  except Exception as error:
+    print("Error: ", error)
+    return False
 
-    print("ICS32 simple client connected to "+
-    f"{server} on {port}")
-"""
+send('168.235.86.101', 3021, 'meow', 'meow','meow','meow')
+#send('127.0.0.1', 8080, 'test', 'meow','meow','meow')

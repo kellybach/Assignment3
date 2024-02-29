@@ -23,8 +23,8 @@ def extract_json(json_msg:str) -> DataTuple:
   try:
     json_obj = json.loads(json_msg)
     response = json_obj["response"]
-    token = ["response"]["token"]
-    return DataTuple(response, token)
+    token = json_obj["response"]["token"]
+    return token
   except json.JSONDecodeError:
     print("Json cannot be decoded.")
     return None
