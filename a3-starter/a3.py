@@ -86,9 +86,10 @@ def open_file(string):
 
 def edit_file(string, pathway, info):
     num = (len(searches(string)) - 1 )
-    i = 1 
+    i = 1
     while i <= num: 
         profile = Profile.Profile(dsuserver=None, username=info[0], password=info[1], bio=info[2])
+        Profile.Profile.load_profile(profile, pathway)
         if searches(string)[i] == '-usr':
             info[0] = searches(string)[i + 1]
             profile = Profile.Profile(dsuserver=None, username=info[0], password=info[1], bio=info[2])
@@ -100,8 +101,7 @@ def edit_file(string, pathway, info):
             profile = Profile.Profile(dsuserver=None, username=info[0], password=info[1], bio=info[2])
         elif searches(string)[i] == '-addpost':
             new_post = Profile.Post(searches(string)[i + 1])
-            Profile.Profile.load_profile(profile, pathway)
-            Profile.Profile.add_post(profile, post = new_post)
+            Profile.Profile.add_post(profile, post=new_post)
         elif searches(string)[i] == '-delpost':
             Profile.Profile.load_profile(profile, pathway)
             Profile.Profile.del_post(profile, int(searches(string)[i + 1]))
@@ -182,6 +182,7 @@ def run():
                 inlist.append(information)
             for item in inlist:
                 newcomm += f'{item} '
+            print(newcomm, pathway, info)
             edit_file(newcomm, pathway, info)
         elif comm == 'P':
             inlist = []
